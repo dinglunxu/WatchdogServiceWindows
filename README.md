@@ -78,13 +78,13 @@ Windows 服务 Service 还包含一个 Windows 服务列表 Services ，Services
 				"Active":	true,
 				"Period":	1000,
 				"Aguments":	"",
-				"CurrentDir":	".\\\\"
+				"CurrentDir":	".\\"
 			}, {
 				"Name":	"Calc",
 				"Active":	true,
 				"Period":	1000,
 				"Aguments":	"",
-				"CurrentDir":	".\\\\"
+				"CurrentDir":	".\\"
 			}]
 	}
 }

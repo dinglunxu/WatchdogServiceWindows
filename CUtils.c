@@ -1,4 +1,4 @@
-#include "CUtils.h"
+﻿#include "CUtils.h"
 
 //获取程序的完整路径
 TCHAR *  GetFullPath() {
@@ -76,7 +76,7 @@ int InitConfig() {
     jsonItem = cJSON_CreateObject();
     cJSON_AddStringToObject(jsonItem, "Path", "Notepad");
     cJSON_AddStringToObject(jsonItem, "Aguments", "");
-    cJSON_AddStringToObject(jsonItem, "CurrentDir", ".\\\\");
+    cJSON_AddStringToObject(jsonItem, "CurrentDir", ".\\");
     cJSON_AddBoolToObject(jsonItem, "Active", TRUE);
     cJSON_AddNumberToObject(jsonItem, "Period", 1000);
     cJSON_AddItemToArray(jsonArr, jsonItem);
@@ -85,7 +85,7 @@ int InitConfig() {
     jsonItem = cJSON_CreateObject();
     cJSON_AddStringToObject(jsonItem, "Path", "Calc");
     cJSON_AddStringToObject(jsonItem, "Aguments", "");
-    cJSON_AddStringToObject(jsonItem, "CurrentDir", ".\\\\");
+    cJSON_AddStringToObject(jsonItem, "CurrentDir", ".\\");
     cJSON_AddBoolToObject(jsonItem, "Active", TRUE);
     cJSON_AddNumberToObject(jsonItem, "Period", 1000);
     cJSON_AddItemToArray(jsonArr, jsonItem);

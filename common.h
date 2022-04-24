@@ -1,4 +1,4 @@
-#ifndef Common_H
+﻿#ifndef Common_H
 #define Common_H
 
 
@@ -6,10 +6,8 @@
 #include <tchar.h>
 #include <stdio.h>
 
-//共享内存名称
-#define Memory_Name L"Global\\WatchdogService1_SHARED_MEMORY"
 //服务名称
-#define ServiceName L"WatchdogService1"
+#define ServiceName L"WatchdogService"
 #define ServiceAguments L" -s"
 #define CONFIG_PATH L".\\conf"
 //看门狗配置文件
@@ -17,9 +15,9 @@
 //日志路径
 #define LOG_PATH  L".\\logs\\"
 //日志文件名称
-#define LOG_FILE_PATH L"./logs/log.log"
+#define LOG_FILE_PATH L".\\logs\\WatchdogService_log.log"
 //错误日志路径
-#define ERROR_LOG_PATH L"./logs/watchdog_error.log"
+#define ERROR_LOG_PATH L".\\logs\\WatchdogService_error.log"
 //日志文件对象
 FILE * FPLOG;
 //错误日志文件对象
