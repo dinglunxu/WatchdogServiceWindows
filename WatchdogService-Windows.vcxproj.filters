@@ -8,18 +8,6 @@
     <Filter Include="Source Files\cjson">
       <UniqueIdentifier>{2b381205-6fde-468d-8d4a-61c376ef0f88}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\utils">
-      <UniqueIdentifier>{1a275d8c-9deb-4062-92ae-ab54fadd92f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\services">
-      <UniqueIdentifier>{d450c2b8-6f3a-49fa-a3de-a4ac6f2ce335}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\logger">
-      <UniqueIdentifier>{b1f16aec-3d76-477c-8d06-2386e99f9026}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\base64">
-      <UniqueIdentifier>{0759a19d-ac96-481a-bc61-9e257b2dea8e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
@@ -27,62 +15,41 @@
     <Filter Include="Header Files\cjson">
       <UniqueIdentifier>{7fab28f0-4e95-4797-a909-21880b89c3b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\utils">
-      <UniqueIdentifier>{3c19821d-6a7c-4c3a-a9d4-97306e5617d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\services">
-      <UniqueIdentifier>{28f73588-d390-401d-8352-36ad97f1bc01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\common">
-      <UniqueIdentifier>{4cdfb844-e844-438a-8190-13e07cdef9a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\logger">
-      <UniqueIdentifier>{a065f7d9-ed2a-4f94-a428-c879e7265b57}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\base64">
-      <UniqueIdentifier>{1ba87dc9-0419-40f8-8e5a-aeaf54851c16}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="lib\cjson\cJSON_Utils.c">
       <Filter>Source Files\cjson</Filter>
     </ClCompile>
     <ClCompile Include="lib\cjson\cJSON.c">
       <Filter>Source Files\cjson</Filter>
     </ClCompile>
-    <ClCompile Include="CUtils.c">
-      <Filter>Source Files\utils</Filter>
+    <ClCompile Include="src\CUtils.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Service.c">
-      <Filter>Source Files\utils</Filter>
+    <ClCompile Include="src\Logger.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WatchdogService.c">
-      <Filter>Source Files\services</Filter>
+    <ClCompile Include="src\main.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.c">
-      <Filter>Source Files\logger</Filter>
+    <ClCompile Include="src\ParseConf.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="base64.c">
-      <Filter>Source Files\base64</Filter>
+    <ClCompile Include="src\Service.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ParseConf.c">
-      <Filter>Source Files\services</Filter>
+    <ClCompile Include="src\stdafx.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.c">
+    <ClCompile Include="src\WatchdogService.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="conf\config.json">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="README.md">
       <Filter>Resource Files</Filter>
     </None>
@@ -90,6 +57,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include=".gitignore">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="LICENSE">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -100,31 +70,28 @@
     <ClInclude Include="lib\cjson\cJSON.h">
       <Filter>Header Files\cjson</Filter>
     </ClInclude>
-    <ClInclude Include="CUtils.h">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Service.h">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="WatchdogService.h">
-      <Filter>Header Files\services</Filter>
-    </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>Header Files\common</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>Header Files\logger</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="include\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="base64.h">
-      <Filter>Header Files\base64</Filter>
+    <ClInclude Include="include\CUtils.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ParseConf.h">
-      <Filter>Header Files\services</Filter>
+    <ClInclude Include="include\Logger.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="include\ParseConf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Service.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WatchdogService.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -132,10 +99,5 @@
     <ResourceCompile Include="WatchdogService-Windows.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="icon.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

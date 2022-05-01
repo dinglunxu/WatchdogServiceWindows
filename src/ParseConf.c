@@ -1,81 +1,4 @@
-﻿#include "stdafx.h"
-
-
-//解析服务默认配置
-int ParseConfForServices() {
-    //TCHAR * path = GetFullDir();
-    //TCHAR * configFilePath = _tcscat(path, _T(CONFIG_FILE_PATH));
-    //文件结构体
-    FILE* config_file;
-    //打开文件
-    //if ((config_file = _tfopen(configFilePath, _T("r"))) == NULL) {
-    if ((config_file = _tfopen(CONFIG_FILE_PATH, _T("r"))) == NULL) {
-        log_e(_T("配置文件打开失败!\n"));
-        exit(EXIT_FAILURE);
-    }
-
-    //读取文件长度
-    //定位文件偏移到末尾
-    fseek(config_file, 0L, SEEK_END);
-    //获取文件长度
-    long total_size = ftell(config_file);
-    if (total_size < 0) {
-        log_e(_T("读取配置文件失败!配置文件长度为0\n"));
-        exit(EXIT_FAILURE);
-    }
-    //分配内存
-    char* json_data = malloc(sizeof(char) * total_size + 1);
-
-    if (json_data == NULL) {
-        log_e(_T("读取配置文件失败!分配内存失败\n"));
-        exit(EXIT_FAILURE);
-    }
-
-    //设置文件指针到开头
-
-    fseek(config_file, 0L, SEEK_SET);
-
-    fread(json_data, sizeof(char), total_size, config_file);
-
-    //关闭配置文件
-    fclose(config_file);
-
-    //解析json
-    cJSON* json = cJSON_Parse(json_data);
-
-    cJSON* cmd = cJSON_GetObjectItem(json, "cmd");
-
-    if (cmd == NULL) {
-        log_e(_T("无法启动程序,命令行无效!配置中无cmd参数\n"));
-        exit(EXIT_FAILURE);
-    }
-
-    //转宽字符
-    //char * base64CmdStr = cmd->valuestring;
-    //转换
-    //char * cmdStr =  base64_decode(base64CmdStr);
-    errno_t err = 0;
-    size_t* pReturnValue = 0;
-
-    _TCHAR* commandLine = NULL;
-    err = mbstowcs_s(pReturnValue,
-        commandLine,
-        (size_t*)sizeof(cmd->valuestring) + 1,
-        cmd->valuestring,
-        _TRUNCATE);
-    if (commandLine == NULL) {
-        log_e(_T("无法启动程序,命令行无效!转宽字节无效\n"));
-        exit(EXIT_FAILURE);
-    }
-
-    //释放JSON字符串内存
-    free(json_data);
-    //free(configFilePath);
-    //free(cmdStr);
-    return commandLine;
-
-}
-
+﻿#include "../include/stdafx.h"
 
 //解析配置文件 
 int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
@@ -273,6 +196,110 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
     }
 
     //cJSON_Delete(root);
+
+    return 0;
+}
+
+
+
+/* 初始化配置文件 */
+int InitConfig() {
+
+    cJSON* root = NULL;
+    cJSON* jsonObj = NULL;
+    cJSON* jsonArr = NULL;
+    cJSON* jsonItem = NULL;
+
+    //创建根对象
+    root = cJSON_CreateObject();
+
+    //cJSON_AddStringToObject(root, "cmd", "notepad");
+
+    //添加依赖链对象
+    jsonObj = cJSON_CreateObject();
+    cJSON_AddArrayToObject(jsonObj, "Chains");
+    cJSON_AddItemToObject(root, "Chain", jsonObj);
+
+    // 添加服务对象
+
+    jsonItem = cJSON_CreateObject();
+    cJSON_AddItemToObject(jsonItem, "Period", cJSON_CreateNumber(10000));
+
+    jsonObj = cJSON_CreateObject();
+    cJSON_AddItemToObject(jsonObj, "Default", jsonItem);
+
+    jsonArr = cJSON_CreateArray();
+
+    jsonItem = cJSON_CreateObject();
+    cJSON_AddStringToObject(jsonItem, "Name", "InfluxDB");
+    cJSON_AddBoolToObject(jsonItem, "Active", TRUE);
+    cJSON_AddNumberToObject(jsonItem, "Period", 1000);
+    cJSON_AddItemToArray(jsonArr, jsonItem);
+
+    jsonItem = cJSON_CreateObject();
+    cJSON_AddStringToObject(jsonItem, "Name", "telegraf");
+    cJSON_AddBoolToObject(jsonItem, "Active", TRUE);
+    cJSON_AddNumberToObject(jsonItem, "Period", 1000);
+    cJSON_AddItemToArray(jsonArr, jsonItem);
+
+    jsonItem = cJSON_CreateObject();
+    cJSON_AddStringToObject(jsonItem, "Name", "Grafana");
+    cJSON_AddBoolToObject(jsonItem, "Active", TRUE);
+    cJSON_AddNumberToObject(jsonItem, "Period", 1000);
+    cJSON_AddItemToArray(jsonArr, jsonItem);
+
+    cJSON_AddItemToObject(jsonObj, "Services", jsonArr);
+    cJSON_AddItemToObject(root, "Service", jsonObj);
+
+    //添加应用程序对象
+    jsonItem = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonItem, "Period", 10000);
+
+    jsonObj = cJSON_CreateObject();
+    cJSON_AddItemToObject(jsonObj, "Default", jsonItem);
+
+    jsonArr = cJSON_CreateArray();
+    jsonItem = cJSON_CreateObject();
+    cJSON_AddStringToObject(jsonItem, "Path", "Notepad");
+    cJSON_AddStringToObject(jsonItem, "Aguments", "");
+    cJSON_AddStringToObject(jsonItem, "CurrentDir", ".\\");
+    cJSON_AddBoolToObject(jsonItem, "Active", TRUE);
+    cJSON_AddNumberToObject(jsonItem, "Period", 1000);
+    cJSON_AddItemToArray(jsonArr, jsonItem);
+
+    //cJSON_free(jsonItem);
+    jsonItem = cJSON_CreateObject();
+    cJSON_AddStringToObject(jsonItem, "Path", "Calc");
+    cJSON_AddStringToObject(jsonItem, "Aguments", "");
+    cJSON_AddStringToObject(jsonItem, "CurrentDir", ".\\");
+    cJSON_AddBoolToObject(jsonItem, "Active", TRUE);
+    cJSON_AddNumberToObject(jsonItem, "Period", 1000);
+    cJSON_AddItemToArray(jsonArr, jsonItem);
+
+
+    cJSON_AddItemToObject(jsonObj, "Apps", jsonArr);
+    cJSON_AddItemToObject(root, "App", jsonObj);
+
+    //将配置写入文件
+    FILE* file = NULL;
+    file = _tfopen(CONFIG_FILE_PATH, _T("a"));
+
+    if (NULL == file) {
+        MessageBox(NULL, _T("配置写入失败"), _T("错误"), MB_ICONSTOP);
+        return -1;
+    }
+    _TCHAR* conf = cJSON_Print(root);
+
+    int res = fputs(conf, file);
+    if (EOF == res) {
+        MessageBox(NULL, _T("配置写入失败"), _T("错误"), MB_ICONSTOP);
+        return -1;
+    }
+    fclose(file);
+
+    cJSON_Delete(root);
+    cJSON_free(conf);
+
 
     return 0;
 }

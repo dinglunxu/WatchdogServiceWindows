@@ -1,6 +1,6 @@
-﻿#include "Service.h"
+﻿#include "../include/Service.h"
 #define LOG_TAG L"ServiceInstall"
-#include "Logger.h"
+#include "../include/Logger.h"
 
 //运行服务
 void RunService(_TCHAR* SrvName) {

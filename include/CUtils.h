@@ -1,4 +1,4 @@
-#ifndef CUTILS_H
+﻿#ifndef CUTILS_H
 #define CUTILS_H
 
 #ifdef __cplusplus
@@ -13,7 +13,7 @@ extern "C"
 #ifdef __WINDOWS__
 
 #include "common.h"
-#include "lib/cjson/cJSON.h"
+#include "../lib/cjson/cJSON.h"
 
 //获取本程序完整路径
 TCHAR *  GetFullPath();
@@ -21,9 +21,6 @@ TCHAR *  GetFullPath();
 TCHAR *  GetFullDir();
 //初始化日志
 BOOL InitLog();
-
-//初始化配置文件
-int InitConfig();
 
 #endif // !CUTILS_h
 

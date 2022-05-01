@@ -16,7 +16,7 @@ extern "C"
 #include <UserEnv.h>
 #include <WtsApi32.h>
 #include <sddl.h>
-#include "lib/cjson/cJSON.h"
+#include "../lib/cjson/cJSON.h"
 #ifdef LOG_TAG
 #undef LOG_TAG
 #define LOG_TAG    "WatchdogService"

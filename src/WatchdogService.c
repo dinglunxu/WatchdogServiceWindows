@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "../include/stdafx.h"
 #ifdef LOG_TAG
 #undef LOG_TAG
 #define LOG_TAG L"WatchdogService"

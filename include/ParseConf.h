@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef ParseConf__h
 #define ParseConf__h
@@ -41,6 +41,8 @@ typedef struct Application {
 int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
     App* AppDef, int* TotalApps, App** ppApps);
 
+//初始化配置文件
+int InitConfig();
 
 
 #ifdef __cplusplus
