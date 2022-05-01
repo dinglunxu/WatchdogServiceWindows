@@ -178,12 +178,12 @@
     <ClInclude Include="include\CUtils.h" />
     <ClInclude Include="include\Logger.h" />
     <ClInclude Include="include\ParseConf.h" />
-    <ClInclude Include="include\resource.h" />
     <ClInclude Include="include\Service.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\WatchdogService.h" />
     <ClInclude Include="lib\cjson\cJSON.h" />
     <ClInclude Include="lib\cjson\cJSON_Utils.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WatchdogService-Windows.rc" />
