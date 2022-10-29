@@ -1,4 +1,7 @@
 ﻿#include "../include/stdafx.h"
+#include <stdlib.h>
+#include <malloc.h>
+
 
 //解析配置文件 
 int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
@@ -14,7 +17,7 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
     FILE* config_file;
     //打开文件
     if ((config_file = _tfopen(CONFIG_FILE_PATH, _T("r"))) == NULL) {
-        log_e(_T("配置文件打开失败!\n"));
+        log_e(_T("配置文件打开失败!, Error code: %d.\n"), GetLastError());
         exit(EXIT_FAILURE);
     }
 
@@ -24,14 +27,14 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
     //获取文件长度
     long total_size = ftell(config_file);
     if (total_size < 0) {
-        log_e(_T("读取配置文件失败!配置文件长度为0\n"));
+        log_e(_T("读取配置文件失败!配置文件长度为0, Error code: %d.\n"), GetLastError());
         exit(EXIT_FAILURE);
     }
     //分配内存
     char* json_data = malloc(sizeof(char) * total_size + 1);
 
     if (json_data == NULL) {
-        log_e(_T("读取配置文件失败!分配内存失败\n"));
+        log_e(_T("读取配置文件失败!分配内存失败, Error code: %d.\n"), GetLastError());
         exit(EXIT_FAILURE);
     }
 
@@ -75,7 +78,7 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
 
     /*======== Service ========*/
 
-    jsonSrv = cJSON_GetObjectItem(root, "Service");
+    jsonSrv = cJSON_GetObjectItem(root, "Services");
     if (jsonSrv) {
         // get default
         cJSON* jsonSrvDef = cJSON_GetObjectItem(jsonSrv, "Default");
@@ -86,23 +89,24 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
             //cJSON_free(jsonKV);
         }
         //cJSON_free(jsonDef);
-        // services array
-        jsonSrvArr = cJSON_GetObjectItem(jsonSrv, "Services");
+        // service array
+        jsonSrvArr = cJSON_GetObjectItem(jsonSrv, "Service");
         if (NULL != jsonSrvArr && cJSON_Array == jsonSrvArr->type) {
             *TotalSrvs = cJSON_GetArraySize(jsonSrvArr);
             // molloc memory
             Srv* ppSrvstmp = (Srv*)calloc(*TotalSrvs, sizeof(Srv));
-            // get services
+            // get service
             for (int i = 0; i < *TotalSrvs; i++) {
                 jsonSrvItem = cJSON_GetArrayItem(jsonSrvArr, i);
                 if (NULL != jsonSrvItem) {
 
                     // server name
                     cJSON* jsonSrvName = cJSON_GetObjectItem(jsonSrvItem, "Name");
+
                     if (NULL != jsonSrvName && cJSON_String == jsonSrvName->type)
                         err = mbstowcs_s(&converted,
                             ppSrvstmp[i].Name,
-                            (size_t*)sizeof(jsonSrvName->valuestring) + 1,
+                            (size_t*)sizeof(ppSrvstmp[i].Name),
                             jsonSrvName->valuestring,
                             _TRUNCATE);
 
@@ -129,7 +133,7 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
 
     /*======== App ========*/
 
-    jsonApp = cJSON_GetObjectItem(root, "App");
+    jsonApp = cJSON_GetObjectItem(root, "Apps");
     if (jsonApp) {
         // get default
         cJSON* jsonAppDef = cJSON_GetObjectItem(jsonApp, "Default");
@@ -139,12 +143,12 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
                 AppDef->Period = jsonAppKV->valueint;
         }
         // ppAppstmp array
-        cJSON* jsonAppArr = cJSON_GetObjectItem(jsonApp, "Apps");
+        cJSON* jsonAppArr = cJSON_GetObjectItem(jsonApp, "App");
         if (NULL != jsonAppArr && cJSON_Array == jsonAppArr->type) {
             *TotalApps = cJSON_GetArraySize(jsonAppArr);
             // molloc memory
             App* ppAppstmp = (App*)calloc(*TotalApps, sizeof(App));
-            // get services
+            // get app
             for (int i = 0; i < *TotalApps; i++) {
 
                 jsonAppItem = cJSON_GetArrayItem(jsonAppArr, i);
@@ -155,7 +159,7 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
                     if (NULL != jsonAppName && cJSON_String == jsonAppName->type)
                         err = mbstowcs_s(&converted,
                             ppAppstmp[i].Path,
-                            (size_t*)sizeof(jsonAppName->valuestring) + 1,
+                            (size_t*)sizeof(ppAppstmp[i].Path),
                             jsonAppName->valuestring,
                             _TRUNCATE);
 
@@ -164,7 +168,7 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
                     if (NULL != jsonAppAguments && cJSON_String == jsonAppAguments->type)
                         err = mbstowcs_s(&converted,
                             ppAppstmp[i].Aguments,
-                            (size_t*)sizeof(jsonAppAguments->valuestring) + 1,
+                            (size_t*)sizeof(ppAppstmp[i].Aguments),
                             jsonAppAguments->valuestring,
                             _TRUNCATE);
 
@@ -173,7 +177,7 @@ int ParseConf(Srv* SrvDef, int* TotalSrvs, Srv** ppSrvs,
                     if (NULL != jsonAppCurrentDir && cJSON_String == jsonAppCurrentDir->type)
                         err = mbstowcs_s(&converted,
                             ppAppstmp[i].CurrentDir,
-                            (size_t*)sizeof(jsonAppCurrentDir->valuestring) + 1,
+                            (size_t*)sizeof(ppAppstmp[i].CurrentDir),
                             jsonAppCurrentDir->valuestring,
                             _TRUNCATE);
 
@@ -217,8 +221,8 @@ int InitConfig() {
 
     //添加依赖链对象
     jsonObj = cJSON_CreateObject();
-    cJSON_AddArrayToObject(jsonObj, "Chains");
-    cJSON_AddItemToObject(root, "Chain", jsonObj);
+    cJSON_AddArrayToObject(jsonObj, "Chain");
+    cJSON_AddItemToObject(root, "Chains", jsonObj);
 
     // 添加服务对象
 
@@ -248,8 +252,8 @@ int InitConfig() {
     cJSON_AddNumberToObject(jsonItem, "Period", 1000);
     cJSON_AddItemToArray(jsonArr, jsonItem);
 
-    cJSON_AddItemToObject(jsonObj, "Services", jsonArr);
-    cJSON_AddItemToObject(root, "Service", jsonObj);
+    cJSON_AddItemToObject(jsonObj, "Service", jsonArr);
+    cJSON_AddItemToObject(root, "Services", jsonObj);
 
     //添加应用程序对象
     jsonItem = cJSON_CreateObject();
@@ -277,8 +281,8 @@ int InitConfig() {
     cJSON_AddItemToArray(jsonArr, jsonItem);
 
 
-    cJSON_AddItemToObject(jsonObj, "Apps", jsonArr);
-    cJSON_AddItemToObject(root, "App", jsonObj);
+    cJSON_AddItemToObject(jsonObj, "App", jsonArr);
+    cJSON_AddItemToObject(root, "Apps", jsonObj);
 
     //将配置写入文件
     FILE* file = NULL;

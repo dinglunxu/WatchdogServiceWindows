@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 //服务名称
-#define ServiceName L"WatchdogService"
+#define ServiceName L"WatchdogServiceWindows"
 #define ServiceAguments L" -s"
 #define CONFIG_PATH L".\\conf"
 //看门狗配置文件

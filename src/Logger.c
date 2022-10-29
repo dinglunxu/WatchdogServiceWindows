@@ -41,9 +41,24 @@ void PrintLog(int level, TCHAR* tag, TCHAR* func, long line, TCHAR* format, ...)
     int index = _stprintf(logBuf, LOG_FORMAT, timeStr, pid, levelStr, tag, func, line);
     va_list args;
     va_start(args, format);
-    _vsntprintf(logBuf + index, LOG_MAX_BUF_SIZE - index, format, args);
+    _vsntprintf_s(logBuf + index, LOG_MAX_BUF_SIZE, LOG_MAX_BUF_SIZE - index, format, args);
     va_end(args);
     //打印日志
-    _ftprintf(FPLOG, logBuf);
+    _ftprintf_s(FPLOG, logBuf);
 
 }
+
+/*
+void LoopCoverageLog() {
+    FILE* file = NULL;
+    file = fopen(szFileFullPath, "rb");
+    if (!file)
+        return;
+    fseek(file, 0, SEEK_END);
+    int nFileLen = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    fclose(file);
+
+}
+*/

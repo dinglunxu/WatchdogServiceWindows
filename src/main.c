@@ -8,7 +8,6 @@
 
 extern BOOL(*createProcess)(const wchar_t *);
 
-
 int wmain(int argc, _TCHAR *argv[]) {
     setlocale(LC_ALL, ".utf-8");
 
@@ -28,7 +27,7 @@ int wmain(int argc, _TCHAR *argv[]) {
             MessageBox(NULL, _T("Could not create folder"), _T("Error"), MB_ICONSTOP);
     }
 
-    ERROR_LOG = _tfopen(ERROR_LOG_PATH,_T("a"));
+    ERROR_LOG = _tfopen(ERROR_LOG_PATH,_T("w+"));
     if (ERROR_LOG == NULL) {
         MessageBox(NULL,_T("日志文件打开失败,程序退出.."),_T("错误"), MB_ICONSTOP);
         exit(EXIT_FAILURE);
@@ -36,7 +35,7 @@ int wmain(int argc, _TCHAR *argv[]) {
     setbuf(ERROR_LOG, NULL); //关闭缓冲
     
     // check log file
-    FPLOG = _tfopen(LOG_FILE_PATH, _T("a"));
+    FPLOG = _tfopen(LOG_FILE_PATH, _T("w+"));
     if (FPLOG == NULL) {
         _ftprintf(ERROR_LOG, _T("日志文件无权限访问,程序退出..\n"));
         exit(EXIT_FAILURE);
@@ -65,7 +64,7 @@ int wmain(int argc, _TCHAR *argv[]) {
             log_i(_T("服务安装成功..\n"));
         }
         else {
-            log_e(_T("服务安装失败..\n"));
+            log_e(_T("服务安装失败.., Error code: %d.\n"), GetLastError());
         }
         //createProcess = CreateProcessForService;
         //RunService(ServiceName);

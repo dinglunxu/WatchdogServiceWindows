@@ -34,8 +34,7 @@ void WINAPI ServiceMain(DWORD argc, PWSTR* argv) {
     hStatus = RegisterServiceCtrlHandler(ServiceName, ServiceCtrlHandler);
     if (!hStatus)
     {
-        DWORD dwError = GetLastError();
-        log_e(_T("启动服务失败!%d\n"), dwError);
+        log_e(_T("启动服务失败! Error code: %d.\n"), GetLastError());
         return;
     }
 
@@ -90,7 +89,7 @@ void Run() {
                             .pi.hProcess = NULL,
                             .pi.hThread = NULL,
                             .pi.dwProcessId = 0,
-                            .pi.dwThreadId = NULL, };
+                            .pi.dwThreadId = NULL };
     Srv* pSrvs = { NULL };
     App* pApps = { NULL };
 
@@ -107,14 +106,19 @@ void Run() {
             for (int i = 0; i < TotalpSrvs; i++) {
                 if (!pSrvs[i].Active)
                     continue;
-                if (GetSrvSta(NULL, pSrvs[i].Name)) {
-                    StartSrv(NULL, pSrvs[i].Name);
-                    //pSrvs[i].ElapsedTime += BasicPeriod;
-                    log_i(pSrvs[i].Name);
+
+                if (pSrvs[i].Period <= pSrvs[i].ElapsedTime) {
+                    pSrvs[i].ElapsedTime = 0;
+                    if (GetSrvSta(NULL, pSrvs[i].Name)) {
+                        StartSrv(NULL, pSrvs[i].Name);
+                        //pSrvs[i].ElapsedTime += BasicPeriod;
+                        //log_i(_T("Check service %s\n"), pSrvs[i].Name);
+                    }
                 }
                 else {
-                    pSrvs[i].ElapsedTime = 0;
+                    pSrvs[i].ElapsedTime += BasicPeriod;
                 }
+
             }
         }
         //应用程序检测
@@ -155,16 +159,14 @@ BOOL CreateProcessForService(const wchar_t * commandLine) {
 
     //获取当前处于活动状态用户的Token
     if (!WTSQueryUserToken(dwSessionID, &hToken)) {
-        int nCode = GetLastError();
-        log_e(_T("获取用户token失败,错误码:%d\n"), nCode);
+        log_e(_T("获取用户token失败, Error code: %d.\n"), GetLastError());
         CloseHandle(hToken);
         return FALSE;
     }
 
     //复制新的Token
     if (!DuplicateTokenEx(hToken, MAXIMUM_ALLOWED, NULL, SecurityIdentification, TokenPrimary, &hTokenDup)) {
-        int nCode = GetLastError();
-        log_e(_T("复制用户token失败,错误码:%d\n"), nCode);
+        log_e(_T("复制用户token失败, Error code: %d.\n"), GetLastError());
 
         CloseHandle(hToken);
         return FALSE;
@@ -172,8 +174,7 @@ BOOL CreateProcessForService(const wchar_t * commandLine) {
 
     //创建环境信息
     if (!CreateEnvironmentBlock(&pEnv, hTokenDup, FALSE)) {
-        DWORD nCode = GetLastError();
-        log_e(_T("创建环境信息失败,错误码:%d\n"), nCode);
+        log_e(_T("创建环境信息失败, Error code: %d.\n"), GetLastError());
         CloseHandle(hTokenDup);
         CloseHandle(hToken);
         return FALSE;
@@ -191,8 +192,7 @@ BOOL CreateProcessForService(const wchar_t * commandLine) {
 
     if (!CreateProcessAsUser(hTokenDup, NULL, commandLine, NULL, NULL, FALSE, dwCreateFlag, pEnv, NULL, &si, &pi))
     {
-        DWORD nCode = GetLastError();
-        log_e(_T("创建进程失败,错误码:%d\n"), nCode);
+        log_e(_T("创建进程失败, Error code: %d.\n"), GetLastError());
         DestroyEnvironmentBlock(pEnv);
         CloseHandle(hTokenDup);
         CloseHandle(hToken);

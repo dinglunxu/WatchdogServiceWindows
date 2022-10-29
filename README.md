@@ -1,4 +1,4 @@
-# WatchdogService-windows
+# WatchdogServiceWindows
 > 以 Windows 服务运行的看门狗程序。
 
 - 程序采用windows服务的方式在后台运行,服务启动方式为自动，在开机时自动启动看门狗服务。
@@ -51,11 +51,11 @@ Windows 服务 Service 还包含一个 Windows 服务列表 Services ，Services
 	"Chain":	{
 		"Chains":	[]
 	},
-	"Service":	{
+	"Services":	{
 		"Default":	{
 			"Period":	10000
 		},
-		"Services":	[{
+		"Service":	[{
 				"Name":	"InfluxDB",
 				"Active":	true,
 				"Period":	1000
@@ -69,11 +69,11 @@ Windows 服务 Service 还包含一个 Windows 服务列表 Services ，Services
 				"Period":	1000
 			}]
 	},
-	"App":	{
+	"Apps":	{
 		"Default":	{
 			"Period":	10000
 		},
-		"Apps":	[{
+		"App":	[{
 				"Name":	"Notepad",
 				"Active":	true,
 				"Period":	1000,

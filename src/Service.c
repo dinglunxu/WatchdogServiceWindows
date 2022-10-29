@@ -20,7 +20,7 @@ BOOL IsInstalled(SC_HANDLE* phSCM, _TCHAR* SrvName) {
         hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
 
     if (!hSCM) {
-        log_e(_T("OpenSCManager failed \n"));
+        log_e(_T("OpenSCManager failed, Error code: %d.\n"), GetLastError());
         return FALSE;
     }
 
@@ -49,7 +49,7 @@ BOOL GetSrvSta(SC_HANDLE* phSCM, _TCHAR* SrvName) {
     if (NULL == phSCM)
         hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
     if (!hSCM) {
-        log_e(_T("OpenSCManager failed \n"));
+        log_e(_T("OpenSCManager failed, Error code: %d.\n"), GetLastError());
         return FALSE;
     }
     SC_HANDLE hService = OpenService(hSCM, SrvName, SERVICE_QUERY_STATUS);
@@ -58,7 +58,9 @@ BOOL GetSrvSta(SC_HANDLE* phSCM, _TCHAR* SrvName) {
     if (!hService) {
         if (NULL == phSCM)
             CloseServiceHandle(hSCM);
-        log_e(_T("OpenService failed \n"));
+        log_e(_T("OpenService failed, Service name: %s, Error code: %d.\n")
+            , SrvName, GetLastError());
+        return -1;
     }
 
     if (!QueryServiceStatusEx(
@@ -71,11 +73,13 @@ BOOL GetSrvSta(SC_HANDLE* phSCM, _TCHAR* SrvName) {
         CloseServiceHandle(hService);
         if (NULL == phSCM)
             CloseServiceHandle(hSCM);
-        log_e(_T("OpenService failed\n"));
+        log_e(_T("Query Service Status failed, Service name: %s, Error code: %d.\n")
+            , SrvName, GetLastError());
+        return -1;
     }
 
     if (ssStatus.dwCurrentState == SERVICE_STOPPED) {
-        log_i("Cannot start the service because it is already running \n");
+        log_i(_T("Service is stopped, Service name: %s.\n"), SrvName);
         bResult = TRUE;
     }
     
@@ -96,14 +100,15 @@ int StartSrv(SC_HANDLE* phSCM, _TCHAR* SrvName) {
     if (NULL == phSCM)
         hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
     if (!hSCM) {
-        log_e(_T("OpenSCManager failed \n"));
+        log_e(_T("OpenSCManager failed, Service name: %s, Error code: %d.\n"), GetLastError());
         return -1;
     }
     SC_HANDLE hService = OpenService(hSCM, SrvName, SERVICE_ALL_ACCESS);
     if (!hService) {
         if (NULL == phSCM)
             CloseServiceHandle(hSCM);
-        log_e(_T("OpenService failed\n"));
+        log_e(_T("OpenService failed, Service name: %s, Error code: %d.\n")
+            , SrvName, GetLastError());
         return -1;
     }
 
@@ -117,7 +122,7 @@ int StartSrv(SC_HANDLE* phSCM, _TCHAR* SrvName) {
         CloseServiceHandle(hService);
         if (NULL == phSCM)
             CloseServiceHandle(hSCM);
-        log_e(_T("QueryServiceStatusEx failed \n"));
+        log_e(_T("QueryServiceStatusEx failed, Service name: %s, Error code: %d.\n"), GetLastError());
         return -1;
     }
 
@@ -125,7 +130,7 @@ int StartSrv(SC_HANDLE* phSCM, _TCHAR* SrvName) {
         CloseServiceHandle(hService);
         if (NULL == phSCM)
             CloseServiceHandle(hSCM);
-        log_e(_T("Cannot start the service because it is already running \n"));
+        log_e(_T("Service is already running, Service name: %s.\n"), SrvName);
         return -1;
     }
 
@@ -134,11 +139,15 @@ int StartSrv(SC_HANDLE* phSCM, _TCHAR* SrvName) {
         0,           // number of arguments 
         NULL))      // no arguments 
     {
-        printf("StartService failed (%d)\n", GetLastError());
+        printf(_T("Start service failed, Service name: %s, Error code: %d.\n")
+            , SrvName, GetLastError());
         CloseServiceHandle(hService);
         if (NULL == phSCM)
             CloseServiceHandle(hSCM);
         return 0;
+    }
+    else {
+        log_i(_T("Service started successfully, %s.\n"), SrvName);
     }
 
     return iResult;
@@ -150,7 +159,7 @@ BOOL InstallService(_TCHAR *path) {
     //打开服务控制器
     SC_HANDLE hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
     if (hSCM == NULL) {
-        log_e(_T("打开服务控制器失败...\n"));
+        log_e(_T("打开服务控制器失败..., Error code: %d.\n"), GetLastError());
         return FALSE;
     }
 
@@ -183,7 +192,7 @@ BOOL InstallService(_TCHAR *path) {
         NULL,
         NULL);
     if (hService == NULL){
-        log_e(_T("服务创建失败...\n"));
+        log_e(_T("服务创建失败..., Error code: %d.\n"), GetLastError());
         return FALSE;
     }
     //释放句柄
