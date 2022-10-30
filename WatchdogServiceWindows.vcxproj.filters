@@ -96,7 +96,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="WatchdogService-Windows.rc">
+    <ResourceCompile Include="WatchdogServiceWindows.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
