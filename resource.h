@@ -1,6 +1,6 @@
-//{{NO_DEPENDENCIES}}
+﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by WatchdogService-Windows.rc
+// Used by WatchdogServiceWindows.rc
 //
 #define IDI_ICON1                       101
 
